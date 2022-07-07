@@ -300,8 +300,12 @@ const uploadMachine = createMachine<Context, UploadEvent>(
           ],
         },
         {
-          // Else, show a toast
-          actions: 'invalidFileToast',
+          target: 'uploadingToVendor',
+          actions: [
+            assign({
+              file: (_context, event) => event.file,
+            }),
+          ],
         },
       ],
     },
