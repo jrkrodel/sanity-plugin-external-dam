@@ -10,13 +10,14 @@ import {
 export const DEFAULT_ACCEPT = [
   'video/*',
   'audio/*',
+  'application/pdf'
 ]
 
 const config: VendorConfiguration = {
   id: 's3-dam',  
   customDataFieldName: 's3',
   defaultAccept: DEFAULT_ACCEPT,
-  toolTitle: 'Videos & audio (S3)',
+  toolTitle: 'Upload to s3',
   credentialsFields: [
     {
       name: 'bucketKey',

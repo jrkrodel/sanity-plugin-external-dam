@@ -32,7 +32,16 @@ const Player: React.FC<SanityUpload> = (props) => {
       />
     )
   }
-  return (
+  else if(props.contentType?.includes('pdf')) {
+    return (
+      <iframe
+      src={props.fileURL}
+      width='100%'
+      height='100%'>
+      </iframe>
+    )
+  }
+  else return (
     <video
       style={{
         width: '100%',
@@ -131,134 +140,167 @@ const MediaPreview: React.FC<MediaPreview> = (props) => {
       .image(fullFile.screenshot)
       .width(props.context === 'browser' ? 300 : 600)
       .url()
-  const mediaType = fullFile.contentType?.includes('audio') ? 'audio' : 'video'
+
+  let mediaType = null
+
+  if(fullFile.contentType?.includes('audio')) {
+    mediaType = 'audio'
+  } else if(fullFile.contentType?.includes('video')) {
+    mediaType = 'video'
+  } else if(fullFile.contentType?.includes('pdf')) {
+    mediaType = 'pdf'
+  }
 
   const allowPlayback = props.context !== 'browser'
 
-  return (
-    <WrappingCard
-      context={props.context}
-      paddingBottom={
-        fullFile.dimensions
-          ? `${(fullFile.dimensions.height / fullFile.dimensions.width) * 100}%`
-          : undefined
-      }
-    >
-      {playing ? (
-        <Player {...fullFile} />
-      ) : (
-        <>
-          {imgUrl ? (
-            <img
-              style={{
-                width: '100%',
-                borderRadius: '.3rem',
-                height: '100%',
-                objectFit: 'contain',
-                color: 'transparent',
-              }}
-              src={imgUrl}
-              alt={`Video's thumbnail`}
-            />
-          ) : (
-            <Card
-              padding={0}
-              sizing="border"
-              style={{
-                position: 'relative',
-                height: '100%',
-              }}
-              tone="primary"
-            >
-              <Box
+  if(mediaType != 'pdf') { 
+    return (
+      <WrappingCard
+        context={props.context}
+        paddingBottom={
+          fullFile.dimensions
+            ? `${(fullFile.dimensions.height / fullFile.dimensions.width) * 100}%`
+            : undefined
+        }
+      >
+        {playing ? (
+          <Player {...fullFile} />
+        ) : (
+          <>
+            {imgUrl ? (
+              <img
+                style={{
+                  width: '100%',
+                  borderRadius: '.3rem',
+                  height: '100%',
+                  objectFit: 'contain',
+                  color: 'transparent',
+                }}
+                src={imgUrl}
+                alt={`Video's thumbnail`}
+              />
+            ) : (
+              <Card
+                padding={0}
+                sizing="border"
+                style={{
+                  position: 'relative',
+                  height: '100%',
+                }}
+                tone="primary"
+              >
+                <Box
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%,-50%)',
+                    color: blue[800].hex,
+                    height: mediaType === 'audio' && '60%',
+                    width: mediaType === 'audio' && '90%',
+                  }}
+                >
+                  {mediaType === 'audio' ? (
+                    <>
+                      <AudioIcon
+                        style={{
+                          width: '50%',
+                          maxHeight: '70%',
+                          position: 'absolute',
+                          left: '50%',
+                          top: '50%',
+                          transform: 'translate(-50%,-50%)',
+                          zIndex: 0,
+                          color:
+                            fullFile && 'waveformData' in fullFile
+                              ? blue[100].hex
+                              : blue[800].hex,
+                        }}
+                      />
+                      {fullFile.waveformData && (
+                        <WaveformDisplay
+                          waveformData={fullFile.waveformData}
+                          style={{
+                            zIndex: 1,
+                            position: 'relative',
+                            height: '100%',
+                          }}
+                          colorHue="blue"
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <VideoIcon style={{ width: '50%', maxHeight: '70%' }} />
+                  )}
+                </Box>
+              </Card>
+            )}
+            {allowPlayback && (
+              <button
                 style={{
                   position: 'absolute',
                   left: '50%',
                   top: '50%',
                   transform: 'translate(-50%,-50%)',
-                  color: blue[800].hex,
-                  height: mediaType === 'audio' && '60%',
-                  width: mediaType === 'audio' && '90%',
+                  fontSize: '3rem',
+                  width: '1.5em',
+                  height: '1.5em',
+                  display: 'flex',
+                  borderRadius: '50%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  background: 'white',
+                  border: '1px solid #ced2d9',
+                  boxShadow: '1px 1px 6px rgba(134,144,160,0.2)',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setPlaying(true)}
+                aria-label={`Play ${mediaType}`}
+              >
+                <PlayIcon />
+              </button>
+            )}
+            {props.context === 'input' && (
+              <Card
+                padding={4}
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  bottom: 0,
+                  width: '100%',
+                  boxSizing: 'border-box',
                 }}
               >
-                {mediaType === 'audio' ? (
-                  <>
-                    <AudioIcon
-                      style={{
-                        width: '50%',
-                        maxHeight: '70%',
-                        position: 'absolute',
-                        left: '50%',
-                        top: '50%',
-                        transform: 'translate(-50%,-50%)',
-                        zIndex: 0,
-                        color:
-                          fullFile && 'waveformData' in fullFile
-                            ? blue[100].hex
-                            : blue[800].hex,
-                      }}
-                    />
-                    {fullFile.waveformData && (
-                      <WaveformDisplay
-                        waveformData={fullFile.waveformData}
-                        style={{
-                          zIndex: 1,
-                          position: 'relative',
-                          height: '100%',
-                        }}
-                        colorHue="blue"
-                      />
-                    )}
-                  </>
-                ) : (
-                  <VideoIcon style={{ width: '50%', maxHeight: '70%' }} />
-                )}
-              </Box>
-            </Card>
-          )}
-          {allowPlayback && (
-            <button
-              style={{
+                <FileMetadata file={fullFile} />
+              </Card>
+            )}
+          </>
+        )}
+      </WrappingCard>
+    )
+  } else {
+    return (
+      <WrappingCard
+      context={props.context}
+      paddingBottom={
+        fullFile.dimensions
+          ? `${(fullFile.dimensions.height / fullFile.dimensions.width) * 100}%`
+          : undefined}
+        > 
+        {
+          allowPlayback ? (
+            <Player {...fullFile} />
+            ) : <h1 style={{
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
-                transform: 'translate(-50%,-50%)',
-                fontSize: '3rem',
-                width: '1.5em',
-                height: '1.5em',
-                display: 'flex',
-                borderRadius: '50%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                background: 'white',
-                border: '1px solid #ced2d9',
-                boxShadow: '1px 1px 6px rgba(134,144,160,0.2)',
-                cursor: 'pointer',
-              }}
-              onClick={() => setPlaying(true)}
-              aria-label={`Play ${mediaType}`}
-            >
-              <PlayIcon />
-            </button>
-          )}
-          {props.context === 'input' && (
-            <Card
-              padding={4}
-              style={{
-                position: 'absolute',
-                left: 0,
-                bottom: 0,
-                width: '100%',
-                boxSizing: 'border-box',
-              }}
-            >
-              <FileMetadata file={fullFile} />
-            </Card>
-          )}
-        </>
-      )}
-    </WrappingCard>
-  )
+                margin: '0',
+                transform: 'translate(-50%,-50%)'
+            }}>PDF</h1>
+        }
+      </WrappingCard>
+    )
+  }
 }
 
 export default MediaPreview
