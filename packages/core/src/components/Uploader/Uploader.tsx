@@ -17,7 +17,7 @@ export interface UploaderProps {
   /**
    * MIME file type
    */
-  accept?: 'audio/*' | 'video/*' | string | string[]
+  accept?: 'audio/*' | 'video/*' | 'application/pdf' | string | string[]
   /**
    * Whether or not we should use the file's name when uploading
    */
@@ -36,6 +36,9 @@ export interface UploaderProps {
    * Used to clear the field via the remove button
    */
   removeFile?: () => void
+
+  documentType: string;
+
 }
 
 const Uploader: React.FC<UploaderProps> = (props) => {

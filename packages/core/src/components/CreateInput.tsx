@@ -84,6 +84,7 @@ class ExternalDamInput extends React.Component<
     const {
       accept = vendorConfig?.defaultAccept,
       storeOriginalFilename = true,
+      documentType = vendorConfig?.documentType,
     } = type?.options || {}
 
     return (
@@ -110,6 +111,7 @@ class ExternalDamInput extends React.Component<
                 removeFile={this.removeFile}
                 openBrowser={this.toggleBrowser}
                 vendorConfig={vendorConfig}
+                documentType={documentType}
               />
             </DefaultFormField>
           </ChangeIndicatorCompareValueProvider>

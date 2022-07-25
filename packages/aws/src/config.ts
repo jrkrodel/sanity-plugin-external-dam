@@ -81,7 +81,7 @@ const config: VendorConfiguration = {
       return error?.message || 'error'
     }
   },
-  uploadFile: ({ credentials, onError, onSuccess, file, fileName }) => {
+  uploadFile: ({ credentials, onError, onSuccess, file, fileName, documentType}) => {
     if (
       !credentials ||
       typeof credentials.getSignedUrlEndpoint !== 'string' ||
@@ -108,6 +108,7 @@ const config: VendorConfiguration = {
         fileName,
         contentType: file.type,
         secret: credentials.secretForValidating,
+        documentType: documentType,
       }),
       headers: {
         'Content-Type': 'application/json',

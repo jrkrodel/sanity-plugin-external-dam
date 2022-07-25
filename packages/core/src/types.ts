@@ -65,6 +65,9 @@ export interface VendorConfiguration {
      * Should return a VendorUpload object with data we can populate the SanityUpload document with
      */
     onSuccess: (uploadedFile: VendorUpload) => void
+
+    documentType: string
+    
   }) => CleanUpUpload | undefined
 }
 

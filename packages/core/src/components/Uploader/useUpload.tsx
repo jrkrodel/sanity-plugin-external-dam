@@ -4,7 +4,6 @@ import { useMachine } from '@xstate/react'
 import { DropzoneState, useDropzone } from 'react-dropzone'
 import { useToast } from '@sanity/ui'
 import { SanityImageAssetDocument } from '@sanity/client'
-
 import uploadMachine from './uploadMachine'
 import { UploaderProps } from './Uploader'
 import parseAccept from '../../scripts/parseAccept'
@@ -26,8 +25,10 @@ const useUpload = ({
   sanityClient,
   storeOriginalFilename = true,
   onSuccess,
+  documentType,
 }: UploaderProps): useUploadReturn => {
   const toast = useToast()
+  const docType = documentType;
   const { credentials } = React.useContext(CredentialsContext)
   const [state, send] = useMachine(uploadMachine, {
     actions: {
@@ -63,7 +64,8 @@ const useUpload = ({
               type: 'VENDOR_DONE',
               data: uploadedFile,
             }),
-        })
+            documentType: docType
+        });
 
         return () => {
           if (typeof cleanUp === "function") {
@@ -118,7 +120,6 @@ const useUpload = ({
               ...context.vendorUpload,
               ...(context.formatMetadata || {}),
             } as SanityUpload)
-
             resolve(document)
           } catch (error) {
             reject('Failed to create document')
