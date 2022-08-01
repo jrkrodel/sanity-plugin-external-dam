@@ -13,7 +13,7 @@ interface UploadBox extends useUploadReturn {
 }
 
 const UploadBox: React.FC<UploadBox> = (props) => {
-  const { dropzone, state, cancelUpload, retry, onUploadClick } = props
+  const { dropzone, state, cancelUpload, retry, onUploadClick, confirm } = props
   const {
     inputRef,
     getRootProps,
@@ -24,7 +24,7 @@ const UploadBox: React.FC<UploadBox> = (props) => {
   } = dropzone
 
   const metadataStates = ['extractingVideoMetadata', 'extractingAudioMetadata']
-  const uploadingStates = ['uploadingToVendor', 'uploadingToSanity']
+  const uploadingStates = ['uploadingToVendor', 'uploadingToSanity', "confirmFile"]
   const loadingStates = [...metadataStates, ...uploadingStates]
 
   return (
@@ -104,7 +104,33 @@ const UploadBox: React.FC<UploadBox> = (props) => {
         )}
         {loadingStates.find(state.matches) && (
           <>
-            <Spinner />
+                {state.value === 'confirmFile' && (
+              <>
+                <Text weight="bold">Are you sure you wish to upload:</Text>
+                <Text>"{state.context.file.path}"</Text>
+                <Button
+                  icon={UploadIcon}
+                  fontSize={2}
+                  padding={3}
+                  mode="ghost"
+                  tone="primary"
+                  text="Confirm"
+                  style={{ flex: 1 }}
+                  onClick={confirm}
+                />
+                <Button
+                  icon={CloseIcon}
+                  fontSize={2}
+                  padding={3}
+                  mode="ghost"
+                  text="Cancel"
+                  tone="critical"
+                  style={{ flex: 1 }}
+                  onClick={cancelUpload}
+                />
+              </>
+            )}
+            {state.value !== 'confirmFile' && <Spinner />}
             <Text weight="bold" muted>
               {state.matches('extractingVideoMetadata') &&
                 'Extracting video thumbnails'}

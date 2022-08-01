@@ -57,6 +57,13 @@ const uploadMachine = createMachine<Context, UploadEvent>(
     context: INITIAL_CONTEXT,
     states: {
       idle: {},
+      confirmFile: {
+        on: {
+          SUCCESS: {
+            target: 'uploadingToVendor',
+          },
+        },
+      },
       extractingVideoMetadata: {
         invoke: {
           id: 'ExtractVideoMetadata',
@@ -300,7 +307,7 @@ const uploadMachine = createMachine<Context, UploadEvent>(
           ],
         },
         {
-          target: 'uploadingToVendor',
+          target: 'confirmFile',
           actions: [
             assign({
               file: (_context, event) => event.file,

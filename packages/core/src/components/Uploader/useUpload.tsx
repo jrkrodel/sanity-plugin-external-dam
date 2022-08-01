@@ -17,6 +17,7 @@ export interface useUploadReturn {
   state: StateFrom<typeof uploadMachine>
   cancelUpload: () => void
   retry: () => void
+  confirm: () => void
 }
 
 const useUpload = ({
@@ -154,6 +155,12 @@ const useUpload = ({
     })
   }
 
+  function confirm() {
+    send({
+      type: 'SUCCESS'
+    })
+  }
+
   React.useEffect(() => {
     if (state.value === 'success' && state.context.sanityUpload && onSuccess) {
       onSuccess(state.context.sanityUpload)
@@ -166,6 +173,7 @@ const useUpload = ({
     state,
     cancelUpload,
     retry,
+    confirm,
   }
 }
 

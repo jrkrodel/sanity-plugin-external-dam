@@ -77,7 +77,7 @@ const Browser: React.FC<BrowserProps> = (props) => {
         style={{
           background: 'white',
           padding: '2rem',
-          minHeight: onSelect ? '300px' : '100%',
+          minHeight: onSelect ? '300px' : '',
           boxSizing: 'border-box',
         }}
       >
